@@ -145,8 +145,8 @@
                     '<div class="modal-dialog">' +
                     '<div class="modal-content">' +
                     '<div class="modal-header">' +
-                    '<h4 style="padding-top: 1rem;padding-left: 1rem;" class="modal-title"></h4>' +
-                    '<button style="margin: initial;" type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>' +
+                    '<h5 class="modal-title"></h5>' +
+                    '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true"><i class="fal fa-times"></i></span></button>' +
                     '</div>' +
                     '<div class="modal-body">' +
                     '<p></p>' +
@@ -236,17 +236,17 @@
              * @private
              */
             _openEditModal: function () {
-                
+
                 var dt = this.s.dt;
                 var adata = dt.rows({
                     selected: true
                 });
-                
+
                 var columnDefs = this.completeColumnDefs();
                 var data = this.createDialog(columnDefs, 'Edit Record', 'Edit', 'Close', 'editRowBtn');
 
                 var selector = this.modal_selector;
-                
+
                 for (var j in columnDefs) {
                     var arrIndex = "['" + columnDefs[j].name.toString().split(".").join("']['") + "']";
                     var selectedValue = eval("adata.data()[0]" + arrIndex);
@@ -254,7 +254,7 @@
                     $(selector).find(jquerySelector).val(this._quoteattr(selectedValue));
                     $(selector).find(jquerySelector).trigger("change"); // required by select2
                 }
-                
+
                 $(selector + ' input[0]').focus();
                 $(selector).trigger("alteditor:some_dialog_opened").trigger("alteditor:edit_dialog_opened");
             },
@@ -293,7 +293,7 @@
              * @private
              */
             _openDeleteModal: function () {
-                
+
                 var that = this;
                 var dt = this.s.dt;
                 var adata = dt.rows({
@@ -304,7 +304,7 @@
                 // TODO
                 // we should use createDialog()
                 // var data = this.createDialog(columnDefs, 'Delete Record', 'Delete', 'Close', 'deleteRowBtn');
-                
+
                 // Building delete-modal
                 var data = "";
 
@@ -361,7 +361,7 @@
 
                 // Getting the IDs and Values of the tablerow
                 for (var i = 0; i < dt.context[0].aoColumns.length; i++) {
-                    // .data is the attribute name, if any; .idx is the column index, so it should always exists 
+                    // .data is the attribute name, if any; .idx is the column index, so it should always exists
                     var name = dt.context[0].aoColumns[i].data ? dt.context[0].aoColumns[i].data :
                             dt.context[0].aoColumns[i].mData ? dt.context[0].aoColumns[i].mData :
                             dt.context[0].aoColumns[i].idx;
@@ -388,7 +388,7 @@
                 $(selector + ' input[0]').focus();
                 $(selector).trigger("alteditor:some_dialog_opened").trigger("alteditor:add_dialog_opened");
             },
-            
+
             /**
             * Complete DataTable.context[0].aoColumns with default values
             */
@@ -419,27 +419,26 @@
                 }
                 return columnDefs;
             },
-            
+
             /**
             * Create both Edit and Add dialogs
             * @param columnDefs as returned by completeColumnDefs()
             */
             createDialog: function(columnDefs, title, buttonCaption, closeCaption, buttonClass) {
-                                
+
                 var data = "";
                 data += "<form name='altEditor-form' role='form'>";
                 for (var j in columnDefs) {
-                    
+
                     //handle hidden fields
                     if (columnDefs[j].type.indexOf("hidden") >= 0) {
                         data += "<input type='hidden' id='" + columnDefs[j].name + "' ></input>";
                     }
                     else {
                         // handle fields that are visible to the user
-                        data += "<div style='margin-left: initial;margin-right: initial;' class='form-group row'>";
-                        data += "<div class='col-sm-3 col-md-3 col-lg-3 text-right' style='padding-top:4px;'>";
-                        data += "<label for='" + columnDefs[j].name + "'>" + columnDefs[j].title + ":</label></div>";
-                        data += "<div class='col-sm-8 col-md-8 col-lg-8'>";
+                        data += "<div class='form-group row'>"
+                        data += "<label for='" + columnDefs[j].name + "' class='col-lg-3 col-form-label form-label text-left text-lg-right'>" + columnDefs[j].title + ":</label>"
+                        data += "<div class='col-lg-9'>";
 
                         // Adding readonly-fields
                         if (columnDefs[j].type.indexOf("readonly") >= 0) {
@@ -450,7 +449,7 @@
                                 + this._quoteattr(columnDefs[j].title)
                                 + "' placeholder='"
                                 + this._quoteattr(columnDefs[j].title)
-                                + "' style='overflow:hidden'  class='form-control  form-control-sm' value=''>";
+                                + "' style='overflow:hidden'  class='form-control' value=''>";
                         }
                         // Adding select-fields
                         else if (columnDefs[j].type.indexOf("select") >= 0) {
@@ -493,16 +492,16 @@
                                 + (columnDefs[j].readonly ? ' readonly ' : '')
                                 + (columnDefs[j].disabled ? ' disabled ' : '')
                                 + (columnDefs[j].maxLength == false ? "" : " maxlength='" + columnDefs[j].maxLength + "'")
-                                + " style='overflow:hidden'  class='form-control  form-control-sm' value=''>";
-                            data += "<label id='" + this._quoteattr(columnDefs[j].name) + "label"
-                                + "' class='errorLabel'></label>";
+                                + " style='overflow:hidden'  class='form-control' value=''>";
+                            data += "<label id='" + columnDefs[j].name + "label"
+                                + "' class='errorLabel help-block text-danger' style='display: none'></label>";
                         }
 
                         data += "</div><div style='clear:both;'></div></div>";
                     }
                 }
                 data += "</form>";
-                
+
                 var selector = this.modal_selector;
                 $(selector).on('show.bs.modal', function () {
                     var btns = '<button type="button" data-content="remove" class="btn btn-default" data-dismiss="modal">'+closeCaption+'</button>' +
@@ -529,7 +528,7 @@
                     }
                 }
             },
-            
+
             /**
              * Callback for "Add" button
              */
@@ -581,9 +580,9 @@
              * Called after a row has been inserted on server
              */
             _addRowCallback: function (response, status, more) {
-                
+
                     //TODO should honor dt.ajax().dataSrc
-                    
+
                     var data = (typeof response === "string") ? JSON.parse(response) : response;
                     var selector = this.modal_selector;
                     $(selector + ' .modal-body .alert').remove();
@@ -607,7 +606,7 @@
             _editRowCallback: function (response, status, more) {
 
                     //TODO should honor dt.ajax().dataSrc
-                    
+
                     var data = (typeof response === "string") ? JSON.parse(response) : response;
                     var selector = this.modal_selector;
                     $(selector + ' .modal-body .alert').remove();
@@ -626,6 +625,9 @@
                     $("div" + selector).find("button#addRowBtn").prop('disabled', true);
                     $("div" + selector).find("button#editRowBtn").prop('disabled', true);
                     $("div" + selector).find("button#deleteRowBtn").prop('disabled', true);
+
+                    //hide modal
+                    $(selector).modal('hide');
             },
 
             /**
@@ -648,7 +650,7 @@
 
                     $(selector + ' .modal-body').append(message);
             },
-            
+
             /**
              * Default callback for insertion: mock webservice, always success.
              */
